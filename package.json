@@ -1,0 +1,15 @@
+{
+  "name": "spongebob-gba-emulator",
+  "version": "1.0.0",
+  "description": "SpongeBob SquarePants - Battle for Bikini Bottom GBA emulator",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

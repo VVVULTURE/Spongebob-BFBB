@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpongeBob SquarePants – Battle for Bikini Bottom</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
+    :root {
+      --yellow: #FFD700;
+      --deep-yellow: #F4A300;
+      --ocean-blue: #0077B6;
+      --sky-blue: #90E0EF;
+      --sand: #F5DEB3;
+      --bubble: rgba(144, 224, 239, 0.25);
+      --dark: #003049;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: linear-gradient(180deg, #00b4d8 0%, #0077b6 40%, #023e8a 100%);
+      min-height: 100vh;
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Bubbles */
+    .bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--bubble);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      animation: rise linear infinite;
+      bottom: -80px;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(1); opacity: 0.7; }
+      100% { transform: translateY(-110vh) scale(1.1); opacity: 0; }
+    }
+
+    /* Sand floor */
+    .sand-floor {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(180deg, #e9c46a 0%, #f4a261 100%);
+      z-index: 1;
+      border-radius: 60% 60% 0 0 / 20px 20px 0 0;
+    }
+    .sand-floor::before {
+      content: '';
+      position: absolute;
+      top: -12px; left: 0; right: 0;
+      height: 24px;
+      background: radial-gradient(ellipse 20px 10px at 50% 100%, #e9c46a 70%, transparent 100%);
+      background-size: 40px 24px;
+      background-repeat: repeat-x;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding-top: 8px;
+    }
+    header h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      color: var(--yellow);
+      text-shadow: 3px 3px 0 var(--dark), 0 0 30px rgba(255,215,0,0.5);
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+    header p {
+      color: var(--sky-blue);
+      font-size: 0.95rem;
+      margin-top: 4px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Emulator frame */
+    .emu-shell {
+      width: 100%;
+      max-width: 800px;
+      background: linear-gradient(135deg, #FFD700, #F4A300);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow:
+        0 0 0 4px var(--dark),
+        0 12px 40px rgba(0,0,0,0.5),
+        inset 0 2px 0 rgba(255,255,255,0.4);
+      position: relative;
+    }
+    .emu-shell::before {
+      content: '● ● ●';
+      position: absolute;
+      top: 8px; left: 16px;
+      font-size: 10px;
+      color: var(--dark);
+      letter-spacing: 4px;
+      opacity: 0.5;
+    }
+    .emu-label {
+      position: absolute;
+      top: 6px; right: 16px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.75rem;
+      color: var(--dark);
+      opacity: 0.6;
+      letter-spacing: 1px;
+    }
+
+    #game-container {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid var(--dark);
+      position: relative;
+    }
+
+    /* Controls hint */
+    .controls {
+      width: 100%;
+      max-width: 800px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .ctrl-card {
+      background: rgba(0, 48, 73, 0.7);
+      border: 1.5px solid rgba(144, 224, 239, 0.3);
+      border-radius: 14px;
+      padding: 12px 14px;
+      backdrop-filter: blur(8px);
+    }
+    .ctrl-card h3 {
+      font-family: 'Fredoka One', cursive;
+      color: var(--yellow);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .ctrl-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .ctrl-card li {
+      display: flex;
+      justify-content: space-between;
+      color: var(--sky-blue);
+      font-size: 0.8rem;
+    }
+    .ctrl-card li span:first-child {
+      color: rgba(255,255,255,0.6);
+    }
+    kbd {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #fff;
+    }
+
+    footer {
+      color: rgba(144, 224, 239, 0.5);
+      font-size: 0.7rem;
+      text-align: center;
+      padding-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bubbles -->
+  <div class="bubbles" id="bubbles"></div>
+  <div class="sand-floor"></div>
+
+  <div class="wrapper">
+    <header>
+      <h1>SpongeBob SquarePants</h1>
+      <p>⭐ Battle for Bikini Bottom · Game Boy Advance ⭐</p>
+    </header>
+
+    <div class="emu-shell">
+      <span class="emu-label">GBA</span>
+      <div id="game-container"></div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-card">
+        <h3>🕹️ Movement</h3>
+        <ul>
+          <li><span>D-Pad</span> <span><kbd>Arrow Keys</kbd></span></li>
+        </ul>
+      </div>
+      <div class="ctrl-card">
+        <h3>🎮 Buttons</h3>
+        <ul>
+          <li><span>A</span> <span><kbd>Z</kbd></span></li>
+          <li><span>B</span> <span><kbd>X</kbd></span></li>
+          <li><span>L</span> <span><kbd>A</kbd></span></li>
+          <li><span>R</span> <span><kbd>S</kbd></span></li>
+        </ul>
+      </div>
+      <div class="ctrl-card">
+        <h3>⏸️ System</h3>
+        <ul>
+          <li><span>Start</span> <span><kbd>Enter</kbd></span></li>
+          <li><span>Select</span> <span><kbd>Shift</kbd></span></li>
+          <li><span>Save State</span> <span><kbd>F1</kbd></span></li>
+          <li><span>Load State</span> <span><kbd>F2</kbd></span></li>
+        </ul>
+      </div>
+      <div class="ctrl-card">
+        <h3>📺 Display</h3>
+        <ul>
+          <li><span>Fullscreen</span> <span><kbd>F</kbd></span></li>
+          <li><span>Mute</span> <span><kbd>M</kbd></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>Powered by EmulatorJS · Are you ready, kids? 🍍</footer>
+  </div>
+
+  <!-- EmulatorJS -->
+  <script>
+    // Spawn bubbles
+    const container = document.getElementById('bubbles');
+    for (let i = 0; i < 22; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      const size = 10 + Math.random() * 40;
+      b.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${Math.random() * 100}%;
+        animation-duration: ${6 + Math.random() * 12}s;
+        animation-delay: ${-Math.random() * 15}s;
+      `;
+      container.appendChild(b);
+    }
+
+    // EmulatorJS config
+    window.EJS_player = '#game-container';
+    window.EJS_core = 'mgba';
+    window.EJS_gameUrl = '/rom.gba';
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_startOnLoaded = true;
+    window.EJS_color = '#FFD700';
+    window.EJS_backgroundColor = '#003049';
+    window.EJS_defaultOptions = {
+      'save-state-location': 'browser',
+    };
+  </script>
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+
+</body>
+</html>
