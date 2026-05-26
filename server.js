@@ -6,11 +6,11 @@ const PORT = process.env.PORT || 3000;
 // Required for SharedArrayBuffer (used by emulator cores)
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'public'), {
+app.use(express.static(path.join(__dirname), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.gba')) {
       res.setHeader('Content-Type', 'application/octet-stream');
